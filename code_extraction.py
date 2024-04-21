@@ -4,20 +4,20 @@ import helper
 
 
 class CodeExtractor:
-    def __init__(self, library_path='build/c_parse.so', language_name='c'):
+    def __init__(self):
         Language.build_library(
-            library_path,
+            'build/c_parse.so',
             ['tree-sitter-c']
         )
-        self.language = Language(library_path, language_name)
+        self.language = Language('build/c_parse.so', 'c')
         self.parser = Parser()
         self.parser.set_language(self.language)
 
     def extract_code(self, text):
         tree = self.parser.parse(bytes(text, "utf8"))
-        print('>'*100)
-        self.print_tree(tree.root_node, bytes(text, "utf8"))
-        print('<'*100)
+        # print('>'*100)
+        # self.print_tree(tree.root_node, bytes(text, "utf8"))
+        # print('<'*100)
         root_node = tree.root_node
         code_blocks = []
 
@@ -44,7 +44,7 @@ class CodeExtractor:
         if level == 1:
             print(f"{indent}TYPE={node.type}: TEXT={node_text}")
         for child in node.children:
-            self.print_tree(child, source_code, level + 1)
+            self.print_tree(child, source_code, level+1)
 
 
 if __name__ == '__main__':

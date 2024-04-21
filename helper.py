@@ -1,6 +1,21 @@
 import subprocess
 import os
 
+
+def get_status(answer):
+    lst = answer.split('\n')
+    for i in lst:
+        sent = i.lower()
+        if 'final answer:' in sent:
+            return i
+        elif 'action:' in sent:
+            if 'clang' in sent or 'analyze' in sent:
+                return 'clang'
+            if 'tree-sitter' in sent or 'extract' in sent:
+                return 'tree-sitter'
+    return 'invalid'
+
+
 def list_to_str(lst):
     return '\n'.join(lst)
 

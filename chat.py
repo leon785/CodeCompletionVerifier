@@ -8,7 +8,6 @@ class Chatbot:
         self.api_key = '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'
         self.client = OpenAI(api_key=self.api_key)
         self.history = []
-        # self.history = [{"role": 'assistant', "content": 'There is a function called num_adder, returning the addition of two parameters a and b.'}]
 
     def send_message(self, message):
         # get previous context
@@ -53,30 +52,11 @@ class ReActBot(Chatbot):
 
         # session history update
         self.react_msg = self.react_msg + message + assistant_answer
-        return completion
+        return assistant_answer
 
     def react_instruction(self):
         self.history_update(
             'system',
-            # "Answer the following questions as best as you can."
-            # "You have access to the following tools:"
-            # "[tree-sitter code extractor, clang static analyzer]"
-            # ""
-            # "Use the following format:"
-            # "Question: the input question you must answer."
-            # "Thought: you should always think about what to do."
-            # "Action: the action to take, should be one of the tools."
-            # "Action Input: the input to the action"
-            # "Observation: the result of the action"
-            # ""
-            # "this Thought/Action/Action Input/Observation can repeat N times)"
-            # ""
-            # "Thought: I now know the final answer"
-            # "Final Answer: the final answer to the original question"
-            # "Task Completed."
-            # ""
-            # "Begin!"
-
             "You are the brain of a Code Completion Verifier, your decisions will affect the behavior of this program."
             "The Code Completion Verifier will verify the code syntax. If the syntax is correct, it outputs this code "
             "snippets, but if the syntax is incorrect, it returns the error message it received. "
@@ -100,34 +80,48 @@ class ReActBot(Chatbot):
             "\""
             "Thought: you should always think about what to do."
             "Action: the action to take, should be one of the tools."
-            "Observation: the result of the action"
+            "Observation: the result of the action."
             "\""
             ""
             "This Thought/Action/Action Input/Observation can repeat as many times as you would like to."
             "You will always think about what to do based the previous Observation."
             ""
-            
+
             "You must decide whether it is an extracted code or if it is an analysis result of the code."
-            
+
             "If Question or Observation contains raw mixed text with text and explanation, "
             "then you should extract the code."
-            
-            "Observation can also be the analysis result of the verifier, then you should understand the meaning of it."
-            "If the analysis result is empty or says the syntax is correct, then output the code snippet, "
-            "it will be the end of the process."
-            "If the analysis result lists error or warnings, then summarize the result and give the revise advise "
-            "based on the result."
+
+            "Observation can also be the analysis result of the analyzer, then you should understand the meaning of it."
+            "If the analysis result is empty , or only contains \"warnings\" and no \"error\", "
+            "then it means the code syntax is correct"
+            "If the analysis result says the the error of the code, and contains \"error\","
+            "then it means the code syntax is wrong."
             ""
             "When you have the Observation of the analysis result, your next answer set will be "
             "in the following format: "
             "\""
             "Thought: I now know the final answer + your thought based on the previous Observation"
-            "Final Answer: code snippet (when syntax is correct), or report summary (when syntax is incorrect)."
+            "Final Answer: empty when Observation is empty, or pass on the Observation."
             "Task Completed."
             "\""
             "Begin!"
         )
 
+
+class YesNoBot(Chatbot):
+    def __init__(self):
+        super().__init__()
+        self.react_instruction()
+
+    def react_instruction(self):
+        self.history_update(
+            "system",
+            "You need to differentiate the input from user is positive or negative."
+            "Your answer must only be \"positive\" or \"negative\"."
+            "If the input is empty, your answer will be \"positive\"."
+            "If the input has "
+        )
 
 if __name__ == "__main__":
     chatbot = Chatbot()
@@ -142,12 +136,8 @@ if __name__ == "__main__":
               + "\nThought: "
     )
     answer = reactor.send_message(prompt)
-    print(answer.choices[0].message.content)
+    print(answer)
     print()
     print(reactor.history)
     print(reactor.react_msg)
     print("=" * 100)
-
-
-
-
