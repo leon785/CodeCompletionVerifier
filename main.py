@@ -49,6 +49,7 @@ def main():
     print("-- React 2 --")
     print(answer.choices[0].message.content)
     print("=" * 100)
+    print()
 
 
 main()
