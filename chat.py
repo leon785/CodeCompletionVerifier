@@ -60,7 +60,7 @@ class ReActBot(Chatbot):
             'system',
             # "Answer the following questions as best as you can."
             # "You have access to the following tools:"
-            # "[tree-sitter code extractor, infer syntax verifier]"
+            # "[tree-sitter code extractor, clang static analyzer]"
             # ""
             # "Use the following format:"
             # "Question: the input question you must answer."
@@ -86,7 +86,7 @@ class ReActBot(Chatbot):
             ""
 
             "You have access to the following tools:"
-            "[tree-sitter code extractor, infer syntax verifier]"
+            "[tree-sitter code extractor, clang static analyzer]"
             ""
             "You will have the Question at the beginning of the process, in the following format:"
             "\""
@@ -94,56 +94,53 @@ class ReActBot(Chatbot):
             "\""
             "The Question will be \"Is the following text a mixed text or a syntax validation report from a verifier?\""
             "If it is a mixed text, you should decide to use tree-sitter code extractor."
-            "If it is a syntax validation report, you should decide to use infer syntax verifier."
+            "If it is a syntax validation report, you should decide to use clang static analyzer."
             ""
             "You will think about the question step by step. Your answer will be in the following format:"
             "\""
             "Thought: you should always think about what to do."
             "Action: the action to take, should be one of the tools."
-            "Action Input: the input to the action"
             "Observation: the result of the action"
             "\""
             ""
-            "this Thought/Action/Action Input/Observation can repeat N times)"
+            "This Thought/Action/Action Input/Observation can repeat as many times as you would like to."
+            "You will always think about what to do based the previous Observation."
             ""
             
-            "You must decide whether it is an extracted code or if the syntax is correct "
-            "as the brain of Code Completion Verifier."
-            "If Question is a raw mixed text, then you should extract the code. "
-            "Question can also be the validation report of the verifier, then you should understand the meaning of it."
-            "If the report says the syntax is correct, then output the code snippet. "
-            "If not, then summarize the report and output."
+            "You must decide whether it is an extracted code or if it is an analysis result of the code."
+            
+            "If Question or Observation contains raw mixed text with text and explanation, "
+            "then you should extract the code."
+            
+            "Observation can also be the analysis result of the verifier, then you should understand the meaning of it."
+            "If the analysis result is empty or says the syntax is correct, then output the code snippet, "
+            "it will be the end of the process."
+            "If the analysis result lists error or warnings, then summarize the result and give the revise advise "
+            "based on the result."
             ""
-            # "When you have the Observation of the validation report, your next answer set will be the final one. "
-            # "Use following format:"
-            # "\""
-            # "Thought: I now know the final answer"
-            # "Final Answer: code snippet (when syntax is correct), or report summary (when syntax is incorrect)."
-            # "Task Completed."
+            "When you have the Observation of the analysis result, your next answer set will be "
+            "in the following format: "
+            "\""
+            "Thought: I now know the final answer + your thought based on the previous Observation"
+            "Final Answer: code snippet (when syntax is correct), or report summary (when syntax is incorrect)."
+            "Task Completed."
             "\""
             "Begin!"
         )
 
 
 if __name__ == "__main__":
-    # print('=' * 100)
     chatbot = Chatbot()
-
     prompt = "Generate a piece of code in the language C with the explanation. "
     mixed_text = chatbot.send_message(prompt)
     print(mixed_text)
     print('=' * 100)
-    #
-    # prompt = "Try to explain this piece of code line by line."
-    # answer = chatbot.send_message(prompt)
-    # print(answer)
-    # print('=' * 100)
 
     reactor = ReActBot()
     prompt = ("Question: Is the following text an extracted code?"
               + "\"" + mixed_text + "\"\n"
               + "\nThought: "
-              )
+    )
     answer = reactor.send_message(prompt)
     print(answer.choices[0].message.content)
     print()
@@ -151,10 +148,6 @@ if __name__ == "__main__":
     print(reactor.react_msg)
     print("=" * 100)
 
-    prompt = (reactor.react_msg
-              + "\nObservation: " +
-              ""
-              )
 
 
 

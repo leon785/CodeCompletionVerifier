@@ -21,7 +21,7 @@ def main():
     # React 1
     prompt = (
             reactor.react_msg
-            + "Question: Is the following text an extracted code?"
+            + "Question: Act as the Code Completion Verifier, what should you do now?"
             + "\"" + mixed_text + "\"\n"
             + "\nThought: "
     )
@@ -33,8 +33,9 @@ def main():
     print("=" * 100)
 
     # Code extraction
-    extracted_code = extractor.extract_code_from_text(mixed_text)
+    extracted_code = extractor.extract_code(mixed_text)
     extracted_code = helper.list_to_str(extracted_code)
+    helper.str_to_file(extracted_code, "./data/extracted_snippet.c")
     print("-- Code Extraction --")
     print(extracted_code)
     print('=' * 100)
@@ -49,7 +50,23 @@ def main():
     print("-- React 2 --")
     print(answer.choices[0].message.content)
     print("=" * 100)
-    print()
+
+    # Analyze
+    analyzer_result = helper.analyze_syntax()
+    print("-- Analyze --")
+    print(analyzer_result)
+    print("=" * 100)
+
+    # React 3
+    prompt = (
+            reactor.react_msg
+            + "\nObservation: "
+            + analyzer_result
+    )
+    answer = reactor.send_message(prompt)
+    print("-- React 3 --")
+    print(answer.choices[0].message.content)
+    print("=" * 100)
 
 
 main()

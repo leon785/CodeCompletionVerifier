@@ -1,9 +1,10 @@
 from tree_sitter import Language, Parser
+from graphviz import Digraph
+import helper
 
 
 class CodeExtractor:
     def __init__(self, library_path='build/c_parse.so', language_name='c'):
-        # 构建语言解析库
         Language.build_library(
             library_path,
             ['tree-sitter-c']
@@ -12,23 +13,38 @@ class CodeExtractor:
         self.parser = Parser()
         self.parser.set_language(self.language)
 
-    def extract_code_from_text(self, text):
-        """从提供的文本中提取所有 C 代码表达式和函数定义"""
+    def extract_code(self, text):
         tree = self.parser.parse(bytes(text, "utf8"))
+        print('>'*100)
+        self.print_tree(tree.root_node, bytes(text, "utf8"))
+        print('<'*100)
         root_node = tree.root_node
         code_blocks = []
 
-        def extract_code(node):
-            """递归地从每个节点提取代码"""
-            if node.type in ['expression_statement', 'function_definition']:
+        def inner_loop(node, level=0):
+            capture_types = [
+                "preproc_include",
+                "function_definition",
+                "expression_statement",
+                "compound_statement",
+            ]
+            if node.type in capture_types and level <= 1:
                 start = node.start_byte
                 end = node.end_byte
                 code_blocks.append(text[start:end].strip())
             for child in node.children:
-                extract_code(child)
+                inner_loop(child, level+1)
 
-        extract_code(root_node)
+        inner_loop(root_node)
         return code_blocks
+
+    def print_tree(self, node, source_code, level=0):
+        indent = '  ' * level
+        node_text = source_code[node.start_byte:node.end_byte].decode('utf8')
+        if level == 1:
+            print(f"{indent}TYPE={node.type}: TEXT={node_text}")
+        for child in node.children:
+            self.print_tree(child, source_code, level + 1)
 
 
 if __name__ == '__main__':
@@ -55,7 +71,9 @@ if __name__ == '__main__':
     Remember to compile this source code with a C compiler before running the program."
     """
 
-    extracted_code = extractor.extract_code_from_text(mixed_text)
+    extracted_code = extractor.extract_code(mixed_text)
+    extracted_code = helper.list_to_str(extracted_code)
+    helper.str_to_file(extracted_code, "./data/extracted_snippet.c")
     print(extracted_code)
 
 
