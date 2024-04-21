@@ -81,7 +81,9 @@ def main():
         # Analyze
         analyzer_result = helper.analyze_syntax()
         print("-- Analysis --")
+        print("+ + " * 10)
         print(analyzer_result)
+        print("+ + " * 10 + '\n')
 
         # React
         prompt = (
