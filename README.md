@@ -45,6 +45,7 @@ docker run --rm -v "${PWD}:/project" code-completion-verifier
 
 
 ## 4. Integrated Tools
+[openai](https://github.com/openai/openai-python) used for LLM live interaction.<br/>
 [tree-sitter-c](https://github.com/tree-sitter/tree-sitter-c) implemented as a submodule.<br/>
 [llvm clang](https://clang.llvm.org/) is installed into the docker environment for C code syntax analysis.<br/>
 

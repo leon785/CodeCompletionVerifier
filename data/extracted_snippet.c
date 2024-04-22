@@ -1,12 +1,16 @@
-nclude<stdio.h>
+#include<stdio.h>
+int main() {
+    int num1, num2, sum;
 
-i
-t main() {
-    float r, Area;
-    printf("Enter the radius of the circle: ");
-    scanf("%f", &r);
-    Area = 3.1416*r*r;
-    printf("Area of the circle : %f", Area);
-    return(0);
+    printf("Enter the first integer: ");
+    scanf("%d", &num1);
+ 
+    printf("Enter the second integer: ");
+    scanf("%d", &num2);
+
+    sum = num1 + num2;
+
+    printf("The sum of %d and %d is %d.", num1, num2, sum);
+
+    return 0; 
 }
-`
