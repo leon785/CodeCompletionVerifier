@@ -1,16 +1,6 @@
-#include<stdio.h>
+#include <stdio.h>
 int main() {
-    int num1, num2, sum;
-
-    printf("Enter the first integer: ");
-    scanf("%d", &num1);
- 
-    printf("Enter the second integer: ");
-    scanf("%d", &num2);
-
-    sum = num1 + num2;
-
-    printf("The sum of %d and %d is %d.", num1, num2, sum);
-
-    return 0; 
+    printf("Hello, world!\n");
+    return 0;
 }
+#include <stdio.h>` is a preprocessor command that includes the contents of the header file `stdio.h` (standard input/output header) in the

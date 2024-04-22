@@ -36,6 +36,7 @@ RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 
 WORKDIR /project
 COPY . /project
+#CMD ["python3", "/project/main.py"]
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh

@@ -36,8 +36,8 @@ Navigate to the project root directory and execute the following command:
 docker build -t code-completion-verifier .
 ```
 
-### Run the Container
-Once the docker image is built successfully, you can execute the following command to run this container.
+### Run the Program
+In the project root directory, execute the following command to run this program.
 ```bash
 docker run --rm -v "${PWD}:/project" code-completion-verifier
 ```
