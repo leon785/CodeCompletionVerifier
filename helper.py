@@ -26,10 +26,9 @@ def str_to_file(code, path):
         f.close()
 
 
-def analyze_syntax():
-    cur_dir = os.getcwd()
-    command = f'docker run --rm -v "{cur_dir}:/project" llvm-clang'
-    # command = 'docker run --rm -v \"${PWD}:/project\" llvm-clang'
+# CMD ["clang-tidy-10", "./data/extracted_snippet.c", "--", "-I/usr/lib/llvm-10/include"]
+def analyze_syntax(path="./data/extracted_snippet.c"):
+    command = f"clang-tidy-10 {path} -- -I/usr/lib/llvm-10/include"
     result = subprocess.run(command, shell=True, text=True, capture_output=True)
     return result.stderr if result.stderr else result.stdout
 
